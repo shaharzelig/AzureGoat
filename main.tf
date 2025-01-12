@@ -3,7 +3,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.11.0"
+      version = "~> 4.15.0"
     }
     random = {
       source  = "hashicorp/random"
@@ -12,8 +12,13 @@ terraform {
   }
 }
 
+variable "subscription_id" {
+  default = ""
+}
+
 provider "azurerm" {
   features {}
+  subscription_id = var.subscription_id
 }
 
 
@@ -29,7 +34,7 @@ variable "location" {
 
 resource "azurerm_cosmosdb_account" "db" {
   name                = "ine-cosmos-db-data-${random_id.randomId.dec}"
-  location            = "eastus"
+  location            = var.location
   resource_group_name = var.resource_group
   offer_type          = "Standard"
   kind                = "GlobalDocumentDB"
@@ -45,7 +50,7 @@ resource "azurerm_cosmosdb_account" "db" {
   }
 
   geo_location {
-    location          = "eastus"
+    location          = var.location
     failover_priority = 0
   }
 }
